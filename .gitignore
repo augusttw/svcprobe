@@ -1,0 +1,14 @@
+# Binary outputs
+svcprobe
+/bin/
+
+# Test binaries & coverage
+*.test
+*.out
+*.prof
+coverage.txt
+
+# OS & Editor files
+.DS_Store
+.vscode/
+.idea/
