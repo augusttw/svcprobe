@@ -2,30 +2,30 @@
 
 # 🚀 `svcprobe`
 
-### *High-Performance Network Diagnostic & Observability CLI for Distributed Systems*
+### *CLI de Diagnóstico de Rede e Observabilidade de Alta Performance para Sistemas Distribuição*
 
 [![Go Version](https://img.shields.io/badge/Go-1.20%2B-00ADD8?style=for-the-badge&logo=go&logoColor=white)](https://golang.org)
 [![License](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](LICENSE)
 [![Platform](https://img.shields.io/badge/Platform-Linux%20%7C%20macOS%20%7C%20Windows-blue?style=for-the-badge)](https://github.com/augusttw/svcprobe)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=for-the-badge)](https://github.com/augusttw/svcprobe/pulls)
 
-**English** | [Português (pt-BR)](README.pt-BR.md)
+[English](README.md) | **Português (pt-BR)**
 
 ---
 
-**`svcprobe`** is a unified network diagnostic and observability tool for microservices, containers, Kubernetes clusters, and distributed architectures. It combines **DNS, TCP, TLS, and HTTP** audits, providing phase-by-phase latency decomposition, statistical percentiles (**p50, p95, p99**), and structured **JSON** exports.
+**`svcprobe`** é uma ferramenta única de diagnóstico de rede e observabilidade para microsserviços, containers, Kubernetes e sistemas distribuídos. Ele combina auditorias de **DNS, TCP, TLS e HTTP**, oferecendo decomposição da latência por fase, percentis estatísticos (**p50, p95, p99**) e exportação estruturada em **JSON**.
 
-[Features](#-features) • [Installation](#-installation) • [Commands](#-commands) • [Usage Examples](#-usage-examples) • [JSON Schema](#-json-schema)
+[Funcionalidades](#-funcionalidades) • [Instalação](#-instalação) • [Comandos](#-comandos) • [Exemplos](#-exemplos) • [Saída JSON](#-saída-json)
 
 ---
 
 </div>
 
-## 🌐 Why `svcprobe`?
+## 🌐 Por que usar o `svcprobe`?
 
-In distributed systems, troubleshooting inter-service communication often requires chaining multiple disconnected tools (`dig`, `nc`, `curl`, `openssl`).
+Em arquiteturas distribuídas, diagnosticar falhas de comunicação entre serviços costuma exigir o uso de ferramentas isoladas (`dig`, `nc`, `curl`, `openssl`). 
 
-**`svcprobe`** consolidates the entire network diagnostic workflow into a single, lightweight, and blazingly fast Go binary capable of identifying the exact root cause of failure and latency bottlenecks.
+O **`svcprobe`** consolida todo o ciclo de diagnóstico de rede em uma ferramenta única, leve e extremamente veloz em Go, capaz de identificar com precisão a causa raiz de falhas e gargalos de latência.
 
 ```mermaid
 flowchart LR
@@ -39,80 +39,80 @@ flowchart LR
 
 ---
 
-## ✨ Features
+## ✨ Funcionalidades
 
-- **🔍 Multi-Layer Concatenated Diagnostic (`check`)**: End-to-end audit (DNS → TCP → TLS → HTTP) in a single execution.
-- **⏱ HTTP Latency Phase Decomposition (`httptrace`)**: Microsecond-accurate timing breakdown for *DNS Lookup, TCP Connect, TLS Handshake, Time to First Byte (TTFB)*, and *Data Transfer*.
-- **🔒 TLS Certificate Inspection**: Certificate chain validation, expiration checks (warning for certs with <= 30 days remaining), SANs, cipher suites, and protocol version detection (TLS 1.2 / TLS 1.3).
-- **📊 Statistical Percentiles**: Accurate calculation of **p50, p95, p99**, minimum, maximum, mean, and standard deviation.
-- **🚨 Failure Diagnostic Engine**: Automated categorization of failed DNS, refused TCP connections, timeouts, HTTP 4xx/5xx errors, and slow services (`--slow-threshold`).
-- **⚡ High Concurrency Worker Pool**: Parallel probing across hundreds of targets using Goroutines, Channels, and `context` control.
-- **🔄 Continuous Monitoring (`watch`)**: Live terminal dashboard for real-time endpoint health monitoring with historical rollups.
-- **🌲 ASCII Topology Graph (`graph`)**: Elegant terminal tree visualization of service topology and comparative p95 latency histograms.
-- **📄 Structured JSON Export**: Standardized JSON output for seamless integration with CI/CD pipelines and observability stacks.
-- **🛡 Zero External Dependencies**: Built strictly using Go's standard networking library.
+- **🔍 Diagnóstico Multi-Camada Concatenado (`check`)**: Auditoria automática de ponta a ponta (DNS → TCP → TLS → HTTP) em uma única execução.
+- **⏱ Decomposição da Latência HTTP (`httptrace`)**: Medição detalhada da duração de cada etapa: *DNS Lookup, TCP Connect, TLS Handshake, Time to First Byte (TTFB)* e *Data Transfer*.
+- **🔒 Inspeção de Certificados TLS**: Validação da cadeia de certificados, verificação de expiração (alerta para certificados com <= 30 dias), SANs, cifras e protocolos (TLS 1.2 / TLS 1.3).
+- **📊 Percentis Estatísticos**: Cálculo preciso de **p50, p95, p99**, mínimo, máximo, média e desvio padrão.
+- **🚨 Motor de Diagnóstico de Falhas**: Categorização e identificação automática de DNS com falha, conexão TCP recusada, timeouts, HTTP 4xx/5xx e serviços lentos (`--slow-threshold`).
+- **⚡ Alta Concorrência (Worker Pool)**: Probes em múltiplos endpoints em paralelo com Goroutines, Channels e controle por `context`.
+- **🔄 Monitoramento Contínuo (`watch`)**: Dashboard em tempo real para observabilidade de endpoints com histórico acumulado.
+- **🌲 Topologia em Gráfico ASCII (`graph`)**: Visualização elegante no terminal da topologia dos serviços e histograma comparativo da latência p95.
+- **📄 Exportação JSON**: Saída padronizada em JSON para integração simples com CI/CD e pipelines de observabilidade.
+- **🛡 Zero Dependências Externas**: Feito prioritariamente com a biblioteca padrão de redes do Go.
 
 ---
 
-## 💻 Installation
+## 💻 Instalação
 
-### Build from source
+### Compilando a partir do código fonte
 
 ```bash
-# Clone repository
+# Clone o repositório
 git clone https://github.com/augusttw/svcprobe.git
 cd svcprobe
 
-# Build binary
+# Compile o binário
 go build -o svcprobe main.go
 
-# (Optional) Install globally
+# (Opcional) Instale no sistema
 go install ./cmd/svcprobe
 ```
 
 ---
 
-## 🛠 Commands
+## 🛠 Comandos
 
-| Command | Description |
+| Comando | Descrição |
 | :--- | :--- |
-| `svcprobe check` | Perform comprehensive multi-layer diagnostic check (DNS → TCP → TLS → HTTP) |
-| `svcprobe watch` | Continuously monitor endpoints in real-time with rolling statistics |
-| `svcprobe dns` | Dedicated DNS resolution probe (supports custom resolver via `--server`) |
-| `svcprobe tcp` | Dedicated TCP socket connection probe |
-| `svcprobe tls` | Dedicated TLS handshake & SSL certificate validity inspection |
-| `svcprobe http` | Dedicated HTTP request probe with TTFB latency breakdown |
-| `svcprobe graph` | ASCII visual overview of service dependency topology & percentiles |
-| `svcprobe version` | Display current version |
-| `svcprobe help` | Display usage guide and flags |
+| `svcprobe check` | Executa diagnóstico multi-camada completo (DNS → TCP → TLS → HTTP) |
+| `svcprobe watch` | Monitoramento contínuo em tempo real com estatísticas dinâmicas |
+| `svcprobe dns` | Probe dedicado de resolução DNS (suporta resolver customizado via `--server`) |
+| `svcprobe tcp` | Probe dedicado de estabelecimento de socket TCP |
+| `svcprobe tls` | Probe dedicado de handshake TLS e inspeção de certificados SSL |
+| `svcprobe http` | Probe dedicado de requisição HTTP com decomposição de latência TTFB |
+| `svcprobe graph` | Visão geral visual em ASCII da topologia dos serviços e percentis |
+| `svcprobe version` | Exibe a versão atual |
+| `svcprobe help` | Exibe o guia de uso e opções |
 
 ---
 
-## 🎛 Flags and Options
+## 🎛 Flags e Parâmetros
 
-| Flag | Description | Default |
+| Flag | Descrição | Padrão |
 | :--- | :--- | :--- |
-| `-n, --samples` | Number of probe samples per endpoint | `5` |
-| `-t, --timeout` | Timeout per probe attempt | `5s` |
-| `-i, --interval` | Interval between samples or watch cycle | `200ms` |
-| `-c, --concurrency` | Maximum parallel worker goroutines | `10` |
-| `-o, --output` | Output format (`table`, `json`, `json-pretty`) | `table` |
-| `--server` | Custom DNS resolver IP (e.g. `8.8.8.8:53`) | `System Resolver` |
-| `--slow-threshold` | Latency threshold for slow service warning | `500ms` |
-| `--method` | HTTP method (`GET`, `POST`, `HEAD`, etc.) | `GET` |
-| `-k, --insecure` | Skip TLS certificate verification | `false` |
-| `--no-color` | Disable ANSI color output | `false` |
+| `-n, --samples` | Número de amostras de teste por endpoint | `5` |
+| `-t, --timeout` | Tempo limite (timeout) por tentativa | `5s` |
+| `-i, --interval` | Intervalo entre amostras ou ciclo do watch | `200ms` |
+| `-c, --concurrency` | Quantidade máxima de worker goroutines paralelas | `10` |
+| `-o, --output` | Formato de saída (`table`, `json`, `json-pretty`) | `table` |
+| `--server` | Resolver DNS customizado (ex: `8.8.8.8:53`) | `Resolver do Sistema` |
+| `--slow-threshold` | Limiar para alerta de serviço lento | `500ms` |
+| `--method` | Método HTTP (`GET`, `POST`, `HEAD`, etc.) | `GET` |
+| `-k, --insecure` | Ignorar verificação de certificado TLS | `false` |
+| `--no-color` | Desativar cores ANSI | `false` |
 
 ---
 
-## 📖 Usage Examples
+## 📖 Exemplos de Uso
 
-### 1. Comprehensive multi-service health check
+### 1. Auditoria geral de múltiplos serviços
 ```bash
 ./svcprobe check https://api.github.com http://localhost:8080 tcp://db.internal:5432
 ```
 
-**Terminal Output:**
+**Saída no terminal:**
 ```text
 SVCPROBE DIAGNOSTIC SUMMARY (2 targets probed in 1.42s)
 Health Overview: HEALTHY: 2 | WARNING: 0 | UNHEALTHY: 0
@@ -128,19 +128,19 @@ http://localhost:8080            HTTP   ✔ PASS   1.2ms    1.4ms    1.9ms    2.
     Time to 1st Byte: 45.20ms    | Data Transfer: 23.60ms    | Total Request: 120.10ms  
 ```
 
-### 2. TLS Certificate Inspection
+### 2. Inspeção de Certificado TLS
 ```bash
 ./svcprobe tls google.com:443 --samples 3
 ```
 
-**Certificate Analysis:**
+**Análise do certificado:**
 ```text
   ► TLS Certificate Analysis [google.com:443]:
     Subject: *.google.com | Issuer: WR2
     Protocol: TLS 1.3 | Cipher: TLS_AES_128_GCM_SHA256 | Expires: 2026-10-12 (59 days remaining)
 ```
 
-### 3. ASCII Service Topology & Latency Graph
+### 3. Visualização da Topologia em Gráfico ASCII
 ```bash
 ./svcprobe graph https://api.github.com https://google.com
 ```
@@ -163,9 +163,9 @@ Endpoints Dependency & Latency Breakdown:
 
 ---
 
-## 📄 Structured JSON Output
+## 📄 Saída JSON Estruturada
 
-`svcprobe` allows exporting complete results as JSON for observability integrations:
+O `svcprobe` permite exportar resultados em formato JSON completo para auditoria ou integrações:
 
 ```bash
 ./svcprobe check https://1.1.1.1 -n 2 -o json-pretty
@@ -220,9 +220,9 @@ Endpoints Dependency & Latency Breakdown:
 
 ---
 
-## 🧪 Testing
+## 🧪 Testes
 
-To run unit and integration tests across all packages:
+Para rodar a suíte completa de testes de unidade e integração:
 
 ```bash
 go test -v ./...
@@ -230,12 +230,12 @@ go test -v ./...
 
 ---
 
-## 📄 License
+## 📄 Licença
 
-Distributed under the **MIT** License. See [`LICENSE`](LICENSE) for details.
+Distribuído sob a licença **MIT**. Veja [`LICENSE`](LICENSE) para mais informações.
 
 ---
 
 <div align="center">
-Built with ❤️ by <a href="https://github.com/augusttw"><b>augusttw</b></a>
+Desenvolvido com ❤️ por <a href="https://github.com/augusttw"><b>augusttw</b></a>
 </div>
