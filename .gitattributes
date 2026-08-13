@@ -1,0 +1,2 @@
+# GitHub Linguist language detection
+*.go linguist-language=Go
